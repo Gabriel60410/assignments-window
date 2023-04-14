@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assignments Window</title>
+  <style>
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .tab {
+      cursor: pointer;
+      padding: 1rem;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      transition: background-color 0.2s;
+    }
+
+    .tab:hover {
+      background-color: #ddd;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .circuit-list {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .circuit-list-item {
+      cursor: pointer;
+      padding: 1rem;
+      background-color: #f5f5f5;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      transition: background-color 0.2s;
+    }
+
+    .circuit-list-item:hover {
+      background-color: #eee;
+    }
+
+    .timeline {
+      display: flex;
+      gap: 1rem;
+      background-color: #f5f5f5;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+
+    .timeline-item {
+      padding: 1rem;
+      background-color: #ddd;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<!------------------------------------------------------------------------------------------------->
+
+  <div class="tabs">
+    <!-- Ajoutez vos onglets de véhicules ici -->
+    <div class="tab" onclick="switchTab(1)">LAPI 1</div>
+    <div class="tab" onclick="switchTab(2)">LAPI 2</div>
+    <!-- ... -->
+  </div>
+
+  <div id="tab-content-1" class="tab-content active">
+    <!-- Ajoutez le contenu des onglets avec la liste des circuits et le diagramme horizontale ici -->
+    <ul class="circuit-list">
+        <li class="circuit-list-item" data-duration="2" onclick="addToTimeline(this)">Circuit 1 (2 heures)</li>
+        <li class="circuit-list-item" data-duration="3" onclick="addToTimeline(this)">Circuit 2 (3 heures)</li>
+      <!-- ... -->
+    </ul>
+    <div class="timeline"></div>
+  </div>
+
+  <div id="tab-content-2" class="tab-content">
+    <!-- Contenu pour LAPI 2 -->
+  </div>
+
+  <!-- ... -->
+
+
+  <!------------------------------------------------------------------------------------------------->
+  <script>
+    // Script pour gérer les onglets et la sélection des circuits
+    function switchTab(tabNumber) {
+      // Masquer tous les contenus d'onglet
+      const tabContents = document.querySelectorAll('.tab-content');
+      for (const tabContent of tabContents) {
+        tabContent.classList.remove('active');
+      }
+
+      // Afficher le contenu de l'onglet sélectionné
+      const selectedTabContent = document.getElementById(`tab-content-${tabNumber}`);
+      selectedTabContent.classList.add('active');
+    }
+
+    function addToTimeline(circuitItem) {
+      const timeline = document.querySelector('.timeline');
+      const circuitName = circuitItem.textContent;
+      const duration = circuitItem.dataset.duration;
+      const startTime = timeline.childElementCount === 0 ? '09:00' : getNextStartTime(timeline);
+
+      const timelineItem = document.createElement('div');
+      timelineItem.className = 'timeline-item';
+      timelineItem.innerHTML = `
+        <span>Départ: ${startTime}</span>
+        <span>Circuit: ${circuitName}</span>
+        <span>Durée: ${duration} heures</span>
+      `;
+
+      timeline.appendChild(timelineItem);
+}
+
+    function getNextStartTime(timeline) {
+        const lastTimelineItem = timeline.lastElementChild;
+        const lastStartTime = lastTimelineItem.querySelector('span').textContent.split(': ')[1];
+        const lastDuration = parseInt(lastTimelineItem.querySelector('span:nth-child(2)').textContent.split(': ')[1]);
+
+        const [hours, minutes] = lastStartTime.split(':').map(Number);
+        const newHours = hours + lastDuration;
+        const newStartTime = `${newHours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+
+        return newStartTime;
+}
+ 
+  </script>
+
+</body>
+</html>
